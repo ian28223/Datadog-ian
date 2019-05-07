@@ -89,3 +89,5 @@ cd integrations-core/datadog_checks_dev/
 pip install -r requirements-dev.txt
 pip install -e .[cli]
 cd -
+
+echo -e "\n${GREEN}DONE. Manually run the following for good measure.${NOCOLOR} \n\nsource ~/.bashrc\n"
