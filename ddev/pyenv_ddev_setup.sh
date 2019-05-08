@@ -90,4 +90,7 @@ pip install -r requirements-dev.txt
 pip install -e .[cli]
 cd -
 
+ddev config set core $(pwd)/integrations-core
+ddev config set extras $(pwd)/integrations-extras
+
 echo -e "\n${GREEN}DONE. Manually run the following for good measure.${NOCOLOR} \n\nsource ~/.bashrc\n"
