@@ -51,7 +51,7 @@ eval "$(curl https://raw.githubusercontent.com/ian28223/Datadog-ian/master/ddev/
 - Ubuntu 14 (Trusty) might work by using just Python2.
   - Python3 requires Openssl 1.0.2 which is not readily available in Trusty.
   - Comment [this line][5] so as not to attempt installation of Python3.
-  - Change `pyglobal` to `py2latest` (here)[6]
+  - Change `pyglobal` to `py2latest` [here][6]
 - Might also work in Mac OSX.
   - Need to install XCode from Apple App Store manually.
   - The scrip will attempt to installs Homebrew as well.
