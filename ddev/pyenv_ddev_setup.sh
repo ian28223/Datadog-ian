@@ -86,12 +86,19 @@ git clone https://github.com/DataDog/integrations-core.git
 echo -e "${GREEN}Cloning integrations-extras${NOCOLOR}"
 git clone https://github.com/DataDog/integrations-extras.git
 
-cd integrations-core/datadog_checks_dev/
-pip install -r requirements-dev.txt
-pip install -e .[cli]
-cd -
+## Installs ddev
 
-ddev config set core $(pwd)/integrations-core
-ddev config set extras $(pwd)/integrations-extras
+## dev from branch
+#cd integrations-core/datadog_checks_dev/
+#pip install -r requirements-dev.txt
+#pip install -e .[cli]
+#cd -
+
+## stable from PyPI
+pip install datadog-checks-dev[cli]
+
+## Modifies ddev config find to view source config: e.g. /root/.local/share/dd-checks-dev/config.toml
+ddev config set repos.core $(pwd)/integrations-core
+ddev config set repos.extras $(pwd)/integrations-extras
 
 echo -e "\n${GREEN}DONE. Manually run the following for good measure.${NOCOLOR} \n\nsource ~/.bashrc\n"
