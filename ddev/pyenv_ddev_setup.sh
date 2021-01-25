@@ -52,12 +52,12 @@ fi;
 echo -e "${GREEN}Retrieving latest Python versions${NOCOLOR}"
 ## Set latest Python 2/3
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
-  py2latest="$(pyenv install -l | grep -oP '^\s*2\.\d+\.(\d+)$' | sort -V | tail -n1)"
-  py3latest="$(pyenv install -l | grep -oP '^\s*3\.8\.(\d+)$' | sort -V | tail -n1)"
+  py2latest="$(pyenv install -l | grep -oP '^\s*2\.\d+\-dev$' | sort -V | tail -n1)"
+  py3latest="$(pyenv install -l | grep -oP '^\s*3\.8\-dev$' | sort -V | tail -n1)"
 
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-  py2latest="$(pyenv install -l | grep -oE '^\s*2\.\d+\.(\d+)$' | sort -V | tail -n1)"
-  py3latest="$(pyenv install -l | grep -oE '^\s*3\.8\.(\d+)$' | sort -V | tail -n1)"
+  py2latest="$(pyenv install -l | grep -oE '^\s*2\.\d+\-dev$' | sort -V | tail -n1)"
+  py3latest="$(pyenv install -l | grep -oE '^\s*3\.8\-dev$' | sort -V | tail -n1)"
 fi;
 
 echo "Latest Python 2: $py2latest" && \
