@@ -15,7 +15,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
 
   ## Linux
   echo -e "${GREEN}Installing Pyenv${NOCOLOR}"
-  curl https://pyenv.run | bash
+  curl -s https://pyenv.run | bash
   #pyenv
   #pyenv update
   export PATH="~/.pyenv/bin:$PATH"
