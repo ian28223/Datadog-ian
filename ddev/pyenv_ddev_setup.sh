@@ -5,6 +5,15 @@ NOCOLOR="\033[0m"
 
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
 
+  ## Set default python
+  if ! command -v python 1>/dev/null 2>&1; then
+    if command -v python3 1>/dev/null 2>&1; then
+        ln -sf $(which python3) /usr/bin/python; 
+    else
+        ln -sf $(which python2) /usr/bin/python;
+    fi
+  fi
+
   ## Install common dependencies
   echo -e "${GREEN}Installing common dependencies${NOCOLOR}"
   sudo apt update &&\
@@ -18,15 +27,14 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
   curl -s https://pyenv.run | bash
   #pyenv
   #pyenv update
-  export PATH="~/.pyenv/bin:$PATH"
-  eval "$(pyenv init -)"
-  eval "$(pyenv virtualenv-init -)"
-
-  echo -e "${GREEN}Exporting Pyenv variables to bashrc${NOCOLOR}"
-  echo 'export PATH="~/.pyenv/bin:$PATH"' >> ~/.bashrc
-  echo 'eval "$(pyenv init -)"' >> ~/.bashrc
-  echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
-
+  if ! command -v pyenv 1>/dev/null 2>&1; then
+    echo -e "${GREEN}Exporting Pyenv variables to bashrc${NOCOLOR}";
+    echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc;
+    echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc;
+    echo 'eval "$(pyenv init --path)"' >> ~/.bashrc;
+    echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc;
+    echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi' >> ~/.bashrc;
+  fi
 
   echo -e "${GREEN}Sourcing bashrc${NOCOLOR}"
   source ~/.bashrc
