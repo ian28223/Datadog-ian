@@ -48,18 +48,18 @@ Modify the following sections of the script with the actual command to retrieve 
 
 # Logging
 
-## `LOG_ENABLE = True` (Default)
+`LOG_ENABLE = True` (Default)
 
-The script will attempt to create a log `secrets_backend_command.log` on one of the following directories respectively:
+The script will attempt to create a log `secret_backend_command.log` on the following directories respectively:
   - `/var/log/datadog`
   - script directory - wherever the script is located
   - `/tmp/datadog`
 
-Logging will be disabled if script is unable to create/write to any of above directories or if `LOG_ENABLE` is set to `False`.
+Logging is disabled if unable to create/write to any of above directories or if `LOG_ENABLE` is set to `False`.
 
-# DEBUGGING
+# DEBUG
 
-## `DEBUG = True` (Default)
+`DEBUG = True` (Default)
 
 The script will log (if enabled) the full command used to retrieve the secret, the decrypted secrets, and output returned by script in plain text as seen below.
 

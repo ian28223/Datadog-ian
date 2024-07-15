@@ -11,7 +11,7 @@ from datetime import datetime
 # Script logging
 LOG_ENABLE = True
 LOG_DIR = '/var/log/datadog/'
-LOG_FILE = 'secrets_backend_command.log'
+LOG_FILE = 'secret_backend_command.log'
 
 # Set DEBUG = False to mask decrypted secrets from logging.
 DEBUG = True
