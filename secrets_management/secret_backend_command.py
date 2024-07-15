@@ -27,13 +27,8 @@ TEST_SECRETS = {
 }
 
 # Hardcoded input
-USE_TEST_INPUT = True
-TEST_INPUT = '''{"version": "1.0", "secrets": [
-      "testuser"
-    , "testpassword"
-    , "testempty"
-    , "testmisssing"
-]}'''
+USE_TEST_INPUT = False
+TEST_INPUT = '{"version": "1.0", "secrets": ["testuser", "testpassword", "testempty", "testmisssing"]}'
 ### ====== FOR TESTING ONLY ======
 
 def get_secret(secret_name):
@@ -47,10 +42,10 @@ def get_secret(secret_name):
 
         # Command to retrieve secret.
         # command = [
-        #     "<COMMAND>"
-        #     , "<ARGS_1"
-        #     , "<ARGS_2"
-        #     , "<ARGS_N"
+        #     "COMMAND"
+        #     , "ARGS_1"
+        #     , "ARGS_2"
+        #     , "ARGS_N"
         # ]
 
         if DEBUG:
