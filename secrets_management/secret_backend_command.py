@@ -16,9 +16,9 @@ LOG_FILE = 'secrets_backend_command.log'
 DEBUG = True
 
 # ====== FOR TESTING ONLY ======
-TESTING = True
 # Hardcoded secrets
-TEST_SECRETS={
+USE_TEST_SECRETS = True
+TEST_SECRETS = {
       "testuser": "john"
     , "testpassword": "secret"
     , "testempty": ""
@@ -26,6 +26,7 @@ TEST_SECRETS={
 }
 
 # Hardcoded input
+USE_TEST_INPUT = True
 TEST_INPUT = '{"version": "1.0", "secrets": ["testuser", "testpassword", "testempty", "testmisssing"]}'
 # ====== FOR TESTING ONLY ======
 
@@ -37,7 +38,7 @@ def get_secret(secret_name):
         log(f"Retrieving secret_name: {secret_name}")
 
         # FOR TESTING: Retrieve secret from TEST_DATA
-        command = ['echo', TEST_SECRETS[secret_name]] if TESTING else None
+        command = ['echo', TEST_SECRETS[secret_name]] if USE_TEST_SECRETS else None
 
         # Command to retrieve secret.
         # command = [
@@ -152,7 +153,7 @@ def mask_output(original_output):
         if isinstance(sval.get('value'), str):
             masked_output[key]['value'] = mask_string_except_last_one(sval.get('value'))
             # print(mask_string_except_last_one(sval.get('value')))
-            
+
     # print(f"masked output: {masked_output}")
     return masked_output
 
@@ -165,14 +166,14 @@ def get_user_info():
     log(f"User information: {user_info}")
 
 if __name__ == '__main__':    
-    input_json = TEST_INPUT if TESTING else sys.stdin.read()
+    input_json = TEST_INPUT if USE_TEST_INPUT else sys.stdin.read()
 
     if LOG_ENABLE:
         check_log_directory()
 
     # Log user info
     get_user_info()
-    
+
     try:
         secret_names = list_secret_names(input_json)
     except ValueError as e:
