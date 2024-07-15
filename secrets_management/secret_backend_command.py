@@ -146,15 +146,18 @@ def mask_string_except_last_one(input_string, mask_char='*'):
 
 
 def mask_output(original_output):
-    masked_output = original_output.copy()
-    print(f"masked_output: {masked_output}")
+    masked_output = {}
+    # masked_output = dict(original_output)
+    # print(f"masked_output: {masked_output}")
+    # print(f"original_output output: {original_output}")
 
-    for key, sval in masked_output.items():
-        if isinstance(sval.get('value'), str):
-            masked_output[key]['value'] = mask_string_except_last_one(sval.get('value'))
-            # print(mask_string_except_last_one(sval.get('value')))
-
-    # print(f"masked output: {masked_output}")
+    for key, sval in original_output.items():
+        secret_err = sval.get('error')
+        secret_val = mask_string_except_last_one(sval.get('value')) if isinstance(sval.get('value'), str) else sval.get('value')
+        masked_output[key] = {
+            "error": secret_err,
+            "value": secret_val
+        }
     return masked_output
 
 def get_user_info():
@@ -187,9 +190,11 @@ if __name__ == '__main__':
     for s in secret_names:
         secret_result = get_secret(s)
         output[s] = secret_result
-
-    masked_output = mask_output(output)
-    log(json.dumps(output if DEBUG else masked_output) + "\n" + "=" * 20)
+        
+    # Log output
+    masked_output = mask_output(output.copy())
+    output_log = output if DEBUG else masked_output
+    log(json.dumps(output_log) + "\n" + "=" * 20)
 
     # Output to stdout for Datadog Agent
     output_json = json.dumps(output)
