@@ -1,35 +1,40 @@
 #!/opt/datadog-agent/embedded/bin/python
 #!/usr/bin/env python3
 
+import getpass
 import json
 import subprocess
 import sys
 import os
 from datetime import datetime
 
-
+# Script logging
 LOG_ENABLE = True
 LOG_DIR = '/var/log/datadog/'
 LOG_FILE = 'secrets_backend_command.log'
 
-# Set DEBUG = True to mask decrypted secrets from logging.
+# Set DEBUG = False to mask decrypted secrets from logging.
 DEBUG = True
 
-# ====== FOR TESTING ONLY ======
+### ====== FOR TESTING ONLY ======
 # Hardcoded secrets
 USE_TEST_SECRETS = True
 TEST_SECRETS = {
-      "testuser": "john"
+      "testuser": "johnny_b"
     , "testpassword": "secret"
-    , "testempty": ""
-    #, "testmissing" : # Commented out on purpose. Expecting: KeyError returned.
+    , "testempty": ""  # Empty on purpse. Expected error:"Empty string returned."
+    #, "testmissing" : # Commented out on purpose. Expected error: KeyError.
 }
 
 # Hardcoded input
 USE_TEST_INPUT = True
-TEST_INPUT = '{"version": "1.0", "secrets": ["testuser", "testpassword", "testempty", "testmisssing"]}'
-# ====== FOR TESTING ONLY ======
-
+TEST_INPUT = '''{"version": "1.0", "secrets": [
+      "testuser"
+    , "testpassword"
+    , "testempty"
+    , "testmisssing"
+]}'''
+### ====== FOR TESTING ONLY ======
 
 def get_secret(secret_name):
     error = None
@@ -48,7 +53,10 @@ def get_secret(secret_name):
         #     , "<ARGS_N"
         # ]
 
-        log("Command: %s" % ' '.join(command))
+        if DEBUG:
+            # Only log command if DEBUG is True as it potentially contains sensitive arguments.
+            log("Command: %s" % ' '.join(command))
+              
         result = subprocess.run(command
             , text=True
             , stdout=subprocess.PIPE
@@ -69,11 +77,9 @@ def get_secret(secret_name):
 
     # Logging
     log(f"error: {get_secret_output['error']}")
-    if DEBUG:
-        # For troubleshooting only. Comment out in production
-        log(f"secret_value: {get_secret_output['value']}") 
-        pass
+    log(f"secret_value: {get_secret_output['value'] if DEBUG else mask_string(get_secret_output['value'])}") 
     log("-" * 20)
+
     return get_secret_output
 
 def list_secret_names(input_json):
@@ -133,13 +139,18 @@ def log(message):
             log_entry = f"{datetime.now()} - {message}\n"
             f.write(log_entry)
 
-def mask_string_except_last_one(input_string, mask_char='*'):
+def mask_string(input_string, mask_char='*'):
+    if not(isinstance(input_string, str)):
+        return input_string
+        
     unmasked_char_len = 2
     if len(input_string) <= unmasked_char_len:
-        return input_string  # No need to mask if string length is unmasked_char_len
+        # No need to mask if string length is unmasked_char_len
+        return input_string  
 
+    # Last two characters of the input string
+    visible_part = input_string[-unmasked_char_len:]  
     masked_part = mask_char * (len(input_string) - unmasked_char_len)
-    visible_part = input_string[-unmasked_char_len:]  # Last two characters of the input string
 
     masked_string = masked_part + visible_part
     return masked_string
@@ -148,34 +159,32 @@ def mask_string_except_last_one(input_string, mask_char='*'):
 def mask_output(original_output):
     masked_output = {}
     # masked_output = dict(original_output)
-    # print(f"masked_output: {masked_output}")
-    # print(f"original_output output: {original_output}")
 
-    for key, sval in original_output.items():
-        secret_err = sval.get('error')
-        secret_val = mask_string_except_last_one(sval.get('value')) if isinstance(sval.get('value'), str) else sval.get('value')
-        masked_output[key] = {
-            "error": secret_err,
-            "value": secret_val
+    for secret_name, v in original_output.items():
+        secret_val = v.get('value')
+        
+        masked_output[secret_name] = {
+            "value": mask_string(secret_val),
+            "error": v.get('error'),
         }
     return masked_output
+    
 
 def get_user_info():
-    # Run the command to get detailed user information
-    result = subprocess.run(['id'], stdout=subprocess.PIPE, text=True)
-
-    # Log user context info
-    user_info = result.stdout.strip()
-    log(f"User information: {user_info}")
+    user_name = getpass.getuser()
+    user_id = os.getuid()
+    log(f"User info: {user_name} (UID: {user_id})")
+    
 
 if __name__ == '__main__':    
     input_json = TEST_INPUT if USE_TEST_INPUT else sys.stdin.read()
 
     if LOG_ENABLE:
+        # Check and/or create log directory
         check_log_directory()
+        # Log user info
+        get_user_info()
 
-    # Log user info
-    get_user_info()
 
     try:
         secret_names = list_secret_names(input_json)
