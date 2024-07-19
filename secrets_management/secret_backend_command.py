@@ -22,8 +22,8 @@ USE_TEST_SECRETS = True
 TEST_SECRETS = {
       "testuser": "johnny_b"
     , "testpassword": "secret"
-    , "testempty": ""  # Empty on purpse. Expected error:"Empty string returned."
-    #, "testmissing" : # Commented out on purpose. Expected error: KeyError.
+    , "testempty": ""  # Empty on purpse. Expected error: "Empty string returned."
+    #, "testmissing" : # Commented out on purpose. Expected error: "Empty string returned."
 }
 
 # Hardcoded input
@@ -38,7 +38,7 @@ def get_secret(secret_name):
         log(f"Retrieving secret_name: {secret_name}")
 
         # FOR TESTING: Retrieve secret from TEST_DATA
-        command = ['echo', TEST_SECRETS[secret_name]] if USE_TEST_SECRETS else None
+        command = ['echo', TEST_SECRETS.get(secret_name, "")] if USE_TEST_SECRETS else None
 
         # Command to retrieve secret.
         # command = [
