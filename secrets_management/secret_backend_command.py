@@ -63,8 +63,10 @@ def get_secret(secret_name):
         else:
             get_secret_output["value"] = result
     except Exception as ex:
-        template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-        message = template.format(type(ex).__name__, ex.args)
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        template = "Exception type:{0} occurred in {1}:{2} - Error:\n{3!r}"
+        message = template.format(type(ex).__name__, fname, exc_tb.tb_lineno, exc_obj)
         error = f"Failed to retrieve secret: {message}"
 
     if error:
